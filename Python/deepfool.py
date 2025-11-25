@@ -2,7 +2,6 @@ import numpy as np
 from torch.autograd import Variable
 import torch as torch
 import copy
-from torch.autograd.gradcheck import zero_gradients
 
 
 def deepfool(image, net, num_classes=10, overshoot=0.02, max_iter=50):
@@ -39,6 +38,7 @@ def deepfool(image, net, num_classes=10, overshoot=0.02, max_iter=50):
     loop_i = 0
 
     x = Variable(pert_image[None, :], requires_grad=True)
+    # Performs a forward pass through the network to compute the raw (pre-softmax) output scores for the current perturbed image.
     fs = net.forward(x)
     fs_list = [fs[0,I[k]] for k in range(num_classes)]
     k_i = label
@@ -50,7 +50,8 @@ def deepfool(image, net, num_classes=10, overshoot=0.02, max_iter=50):
         grad_orig = x.grad.data.cpu().numpy().copy()
 
         for k in range(1, num_classes):
-            zero_gradients(x)
+            if x.grad is not None:
+                x.grad.zero_()
 
             fs[0, I[k]].backward(retain_graph=True)
             cur_grad = x.grad.data.cpu().numpy().copy()
