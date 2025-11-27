@@ -21,7 +21,7 @@ net.eval()
 
 # Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
-image_path = os.path.join(script_dir, 'test_im3.jpg')
+image_path = os.path.join(script_dir, 'images/test_im5.jpg')
 
 # Verify file exists
 if not os.path.exists(image_path):
